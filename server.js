@@ -1,5 +1,5 @@
 /**
- * AGENTVIZ local server.
+ * AGENTVIZ STUDIO local server.
  * Serves dist/ as a static SPA and provides API routes via modular handlers.
  */
 
@@ -16,13 +16,15 @@ import { shutdownQA } from "./src/lib/qaAgent.js";
 
 // ── Model configuration ──────────────────────────────────────────
 function getConfigPath() {
-  var envPath = process.env.AGENTVIZ_CONFIG;
+  var envPath = process.env.AGENTVIZ_STUDIO_CONFIG || process.env.AGENTVIZ_CONFIG;
   if (envPath) return envPath;
-  return path.join(os.homedir(), ".agentviz", "config.json");
+  var studioPath = path.join(os.homedir(), ".agentviz-studio", "config.json");
+  var legacyPath = path.join(os.homedir(), ".agentviz", "config.json");
+  return fs.existsSync(studioPath) ? studioPath : legacyPath;
 }
 
 export function getConfiguredModel() {
-  var envModel = process.env.AGENTVIZ_MODEL;
+  var envModel = process.env.AGENTVIZ_STUDIO_MODEL || process.env.AGENTVIZ_MODEL;
   if (envModel) return envModel;
   try {
     var raw = fs.readFileSync(getConfigPath(), "utf8");
@@ -128,7 +130,7 @@ export function createServer({ sessionFile, distDir }) {
           }
         });
         watcher.on("error", function (err) {
-          process.stderr.write("AGENTVIZ: file watcher error: " + (err && err.message || err) + "\n");
+          process.stderr.write("AGENTVIZ STUDIO: file watcher error: " + (err && err.message || err) + "\n");
           var errPayload = "data: " + JSON.stringify({ error: "watcher_error" }) + "\n\n";
           for (var client of clients) {
             try { client.write(errPayload); } catch (e) { clients.delete(client); }
@@ -145,7 +147,7 @@ export function createServer({ sessionFile, distDir }) {
     try {
       handleRequest(req, res);
     } catch (err) {
-      process.stderr.write("[agentviz] unhandled request error: " + req.url + "\n" + (err.stack || err.message) + "\n");
+      process.stderr.write("[agentviz-studio] unhandled request error: " + req.url + "\n" + (err.stack || err.message) + "\n");
       try {
         if (!res.headersSent) { res.writeHead(500); res.end("Internal server error"); }
       } catch (e2) {}
@@ -244,7 +246,7 @@ export function createServer({ sessionFile, distDir }) {
   });
 
   server.on("error", function (err) {
-    process.stderr.write("[agentviz] server error: " + err.message + "\n" + (err.stack || "") + "\n");
+    process.stderr.write("[agentviz-studio] server error: " + err.message + "\n" + (err.stack || "") + "\n");
   });
 
   return server;

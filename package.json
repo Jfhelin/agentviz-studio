@@ -1,12 +1,12 @@
 {
-  "name": "agentviz",
-  "version": "0.7.0",
+  "name": "agentviz-studio",
+  "version": "1.0.0",
   "description": "Session replay visualizer for AI agent workflows (Claude Code, VS Code, Copilot CLI)",
   "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jayparikh/agentviz.git"
+    "url": "git+https://github.com/Jfhelin/agentviz-studio.git"
   },
   "keywords": [
     "ai",
@@ -20,7 +20,7 @@
     "devtools"
   ],
   "bin": {
-    "agentviz": "bin/agentviz.js"
+    "agentviz-studio": "bin/agentviz.js"
   },
   "files": [
     "bin",

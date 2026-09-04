@@ -129,8 +129,8 @@ export async function exportSingleSession(rawText, filename) {
     "})();\n" +
     "</" + "script>";
 
-  var exportName = filename.replace(/\.jsonl$/, "") + "-agentviz.html";
-  downloadHtml(buildHtml("AGENTVIZ - " + filename, setupScript, bundleText), exportName);
+  var exportName = filename.replace(/\.jsonl$/, "") + "-agentviz-studio.html";
+  downloadHtml(buildHtml("AGENTVIZ STUDIO - " + filename, setupScript, bundleText), exportName);
 }
 
 // Export a side-by-side comparison as a self-contained HTML file.
@@ -142,5 +142,5 @@ export async function exportComparison(rawTextA, filenameA, rawTextB, filenameB)
   var setupScript =
     "<script>window.__AGENTVIZ_COMPARE__ = " + comparePayload + ";</" + "script>";
 
-  downloadHtml(buildHtml("AGENTVIZ - Comparison", setupScript, bundleText), "comparison-agentviz.html");
+  downloadHtml(buildHtml("AGENTVIZ STUDIO - Comparison", setupScript, bundleText), "comparison-agentviz-studio.html");
 }

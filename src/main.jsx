@@ -23,7 +23,7 @@ class RootErrorBoundary extends React.Component {
         timestamp: new Date().toISOString(),
       };
     }
-    console.error("[AGENTVIZ crash]", error, info && info.componentStack);
+    console.error("[AGENTVIZ STUDIO crash]", error, info && info.componentStack);
     this.setState({ componentStack: componentStack });
   }
 
@@ -43,7 +43,7 @@ class RootErrorBoundary extends React.Component {
           background: "#0d1117", color: "#e6edf3", fontFamily: "'JetBrains Mono', monospace", padding: 32,
         }
       },
-        React.createElement("div", { style: { fontSize: 18, color: "#ff6b6b" } }, "AGENTVIZ crashed"),
+        React.createElement("div", { style: { fontSize: 18, color: "#ff6b6b" } }, "AGENTVIZ STUDIO crashed"),
         React.createElement("pre", {
           style: {
             background: "#161b22", border: "1px solid #30363d", borderRadius: 8,

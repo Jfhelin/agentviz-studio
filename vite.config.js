@@ -7,11 +7,11 @@ import { fileURLToPath } from 'url'
 
 var __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// Vite plugin that auto-starts the AGENTVIZ backend in dev mode
-function agentvizBackend() {
+// Vite plugin that auto-starts the AGENTVIZ STUDIO backend in dev mode
+function agentvizStudioBackend() {
   var child = null
   return {
-    name: 'agentviz-backend',
+    name: 'agentviz-studio-backend',
     configureServer: function () {
       var bin = path.join(__dirname, 'bin', 'agentviz.js')
       child = spawn(process.execPath, [bin, '--no-open'], {
@@ -45,7 +45,7 @@ export default defineConfig(function ({ mode }) {
     // Defaults to './' (relative paths) so the SPA works when served from a
     // subdirectory (e.g. static manifest mode). Set to '/' for root deployments.
     base: process.env.VITE_BASE_PATH || './',
-    plugins: [react(), agentvizBackend()],
+    plugins: [react(), agentvizStudioBackend()],
     server: {
       port: 3000,
       open: true,

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CLI entry point: npx agentviz [session-file]
+ * CLI entry point: npx agentviz-studio [session-file]
  * Builds the SPA (if dist/ not found), starts the local server, and opens the browser.
  */
 
@@ -17,7 +17,7 @@ import net from "net";
 var __dirname = path.dirname(fileURLToPath(import.meta.url));
 var rootDir = path.resolve(__dirname, "..");
 var distDir = path.join(rootDir, "dist");
-var LOG_FILE = path.join(rootDir, "agentviz-server.log");
+var LOG_FILE = path.join(rootDir, "agentviz-studio-server.log");
 
 function log(msg) {
   var line = new Date().toISOString() + " " + msg + "\n";
@@ -106,7 +106,7 @@ function openBrowser(url) {
 // -- Check dist/ exists --
 if (!fs.existsSync(path.join(distDir, "index.html"))) {
   process.stderr.write(
-    "dist/ not found. Run `npm run build` inside the agentviz package first.\n"
+    "dist/ not found. Run `npm run build` inside the agentviz-studio package first.\n"
   );
   process.exit(1);
 }
@@ -116,13 +116,13 @@ findFreePort(DEFAULT_API_PORT, function (err, port) {
   server.listen(port, "127.0.0.1", function () {
     var url = "http://localhost:" + port;
     log("[start] listening on " + url + (sessionFile ? " session=" + path.basename(sessionFile) : ""));
-    process.stdout.write("\n  AGENTVIZ. running at " + url + "\n");
+    process.stdout.write("\n  AGENTVIZ STUDIO. running at " + url + "\n");
     if (sessionFile) {
       process.stdout.write("  Session: " + path.basename(sessionFile) + "\n");
     }
     process.stdout.write("  Logs: " + LOG_FILE + "\n");
     var configuredModel = getConfiguredModel();
-    process.stdout.write("  Model: " + (configuredModel || "default (set via ~/.agentviz/config.json or AGENTVIZ_MODEL)") + "\n");
+    process.stdout.write("  Model: " + (configuredModel || "default (set via ~/.agentviz-studio/config.json or AGENTVIZ_STUDIO_MODEL)") + "\n");
     process.stdout.write("  Press Ctrl+C to stop.\n\n");
     if (!noOpen) { openBrowser(url); }
   });

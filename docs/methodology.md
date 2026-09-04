@@ -16,25 +16,25 @@ All measurements come from VS Code Copilot Chat exports:
 copilot_all_prompts_*.json
 ```
 
-These exports were loaded into a local fork of:
+These exports were originally loaded into a local fork of:
 
 ```text
 jayparikh/agentviz
 ```
 
-Fork:
+The instrumentation now lives in the independent repository:
 
 ```text
-Jfhelin/agentviz
+Jfhelin/agentviz-studio
 ```
 
 Branch:
 
 ```text
-jfhelin/cost-compare-instrumentation
+main
 ```
 
-The fork adds:
+AGENTVIZ STUDIO adds:
 
 - A **Cost view** that breaks each call down by prefix bucket:
   - system
@@ -138,7 +138,7 @@ api/src/repositories/
 
 - Approximately 24 export-worthy symbols
 
-For each condition, we sent that prompt, or a near-variant, in a fresh VS Code Copilot Chat session, exported the chat as JSON, and loaded the export into agentviz Cost Compare.
+For each condition, we sent that prompt, or a near-variant, in a fresh VS Code Copilot Chat session, exported the chat as JSON, and loaded the export into AGENTVIZ STUDIO Cost Compare.
 
 ---
 

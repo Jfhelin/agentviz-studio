@@ -9,7 +9,7 @@
 import { CopilotClient, approveAll } from "@github/copilot-sdk";
 
 var SYSTEM_PROMPT = [
-  "You are a session analysis assistant for AGENTVIZ, a developer tool that visualizes AI agent workflows.",
+  "You are a session analysis assistant for AGENTVIZ STUDIO, a developer tool that visualizes AI agent workflows.",
   "The user will ask questions about an AI coding session (Claude Code or Copilot CLI).",
   "Answer concisely and precisely based on the provided session context.",
   "When referencing specific turns, use the format [Turn N] so the UI can create clickable links.",

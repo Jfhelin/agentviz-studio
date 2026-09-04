@@ -1,10 +1,10 @@
 ---
 name: sync-artifacts
-description: Synchronize all five AGENTVIZ artifacts after a UI change -- README, style guide, color-palette.html, CLAUDE.md, and screenshots. Detects what drifted, drafts updates, and regenerates screenshots.
+description: Synchronize all five AGENTVIZ STUDIO artifacts after a UI change -- README, style guide, color-palette.html, CLAUDE.md, and screenshots. Detects what drifted, drafts updates, and regenerates screenshots.
 user-invocable: true
 ---
 
-# AGENTVIZ Artifact Sync
+# AGENTVIZ STUDIO Artifact Sync
 
 You enforce the **Five-Artifact Sync Rule**: every UI change must update all five artifacts before committing. Your job is to detect what changed, figure out which artifacts drifted, and fix them -- including regenerating screenshots.
 

@@ -1,6 +1,6 @@
-# AGENTVIZ UI/UX Style Guide
+# AGENTVIZ STUDIO UI/UX Style Guide
 
-> The definitive design system reference for AGENTVIZ.
+> The definitive design system reference for AGENTVIZ STUDIO.
 > Every commit that touches UI must conform to these rules.
 > Coding agents should use this document during code review to flag violations.
 
@@ -8,7 +8,7 @@
 
 ## Design Philosophy
 
-AGENTVIZ follows a "quiet power tool" aesthetic inspired by Linear, Raycast, and Vercel.
+AGENTVIZ STUDIO follows a "quiet power tool" aesthetic inspired by Linear, Raycast, and Vercel.
 The interface should feel fast, focused, and information-dense without ever feeling cluttered.
 
 **Core principles:**
@@ -24,7 +24,7 @@ The interface should feel fast, focused, and information-dense without ever feel
 ## 1. Color System
 
 All colors live in `src/lib/theme.js`. Components should reference `theme.*` tokens.
-AGENTVIZ uses one light palette. There is no runtime theme switcher or persisted theme preference.
+AGENTVIZ STUDIO uses one light palette. There is no runtime theme switcher or persisted theme preference.
 
 **Known exceptions:** `LiveIndicator.jsx` hardcodes `#34d399` (teal green) and
 `CompareView.jsx` hardcodes `#a78bfa` (purple) for the Session B accent.
@@ -250,7 +250,7 @@ and the view-switcher tab buttons in `AppHeader`. Using it elsewhere is a violat
   letterSpacing: "-0.5px",
   color: theme.text.primary,
 }
-// Always renders: AGENTVIZ<span style={{ color: theme.accent.primary }}>.</span>
+// Always renders: AGENTVIZ <span style={{ color: theme.accent.primary }}>STUDIO.</span>
 ```
 
 **Metric values** -- large, bold, colored:
@@ -1142,16 +1142,16 @@ import KeyboardHint from "./ui/KeyboardHint.jsx";
 
 ## 17. Branding
 
-- Product name: **AGENTVIZ** (all caps, no spaces).
+- Product name: **AGENTVIZ STUDIO** (all caps).
 - Always use the `BrandWordmark` component for the logo. It renders the accent dot automatically.
   Never inline the brand markup manually.
-- `<title>` tag: `AGENTVIZ`.
+- `<title>` tag: `AGENTVIZ STUDIO`.
 
 ---
 
 ## 18. Inline Styles Only
 
-**AGENTVIZ uses zero CSS files for component styling.** All styles are inline `style={}` objects.
+**AGENTVIZ STUDIO uses zero CSS files for component styling.** All styles are inline `style={}` objects.
 
 ### Rules
 
@@ -1180,7 +1180,7 @@ import KeyboardHint from "./ui/KeyboardHint.jsx";
 | Component | Purpose |
 |-----------|---------|
 | `ShellFrame` | Full-viewport flex-column container |
-| `BrandWordmark` | "AGENTVIZ." logo with accent dot |
+| `BrandWordmark` | "AGENTVIZ STUDIO." logo with accented "STUDIO." |
 | `ToolbarButton` | Standard button with icon + text |
 | `ExportStatusButton` | Async operation button (idle/loading/done/error) |
 | `ResizablePanel` | Drag-to-resize split panel |
@@ -1260,7 +1260,7 @@ When reviewing a PR that touches UI, verify each of these:
 - [ ] **Semantic HTML**: Buttons are `<button>`, not clickable `<div>`.
 - [ ] **Error states**: Use `theme.semantic.error*` tokens. Always pair color with icon or text.
 - [ ] **Empty states**: Centered message with `theme.text.dim` and `theme.fontSize.md`.
-- [ ] **Brand**: Product name is "AGENTVIZ" (all caps). Uses `BrandWordmark` component.
+- [ ] **Brand**: Product name is "AGENTVIZ STUDIO" (all caps). Uses `BrandWordmark` component.
 - [ ] **Data formatting**: Durations, numbers, and costs follow the formatting rules in Section 15.
 - [ ] **z-index**: Uses `theme.z.*` tokens for new code. No new arbitrary values.
 - [ ] **Transitions**: `ease-out` only. Duration uses `theme.transition.*`. No decorative motion.

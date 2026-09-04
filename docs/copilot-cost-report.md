@@ -637,7 +637,7 @@ The full methodology — tooling, units, workload rationale, the five traps, and
 
 This covers:
 
-- Tooling and units (agentviz fork, AI Credits)
+- Tooling and units (AGENTVIZ STUDIO, AI Credits)
 - What "hello world" and "real workload" mean
 - The test workload (JSDoc on the OctoCat Supply demo) and why we chose it
 - What the workload misses, alternatives we considered, and what an ideal test program would look like

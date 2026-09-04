@@ -1,11 +1,7 @@
-# Token-cost optimization techniques (fork test plan)
-
-<!-- FORK-LOCAL: this document tracks the experimental program driving the
-     Cost Compare instrumentation work on the Jfhelin/agentviz fork.
-     It is not part of upstream agentviz. Do not cherry-pick into PRs. -->
+# Token-cost optimization techniques
 
 This file is the source of truth for the 11 token-cost reduction techniques
-the fork's Cost Compare instrumentation work is designed to validate. It
+AGENTVIZ STUDIO's Cost Compare instrumentation is designed to validate. It
 exists so that as the tooling evolves we keep checking each technique
 against a methodology that can actually attribute its effect.
 

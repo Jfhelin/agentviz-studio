@@ -78,7 +78,7 @@ export function formatComparisonAsMarkdown(
   const lines: string[] = [];
 
   // Header
-  lines.push(`# AGENTVIZ comparison analysis package: ${nameA} vs ${nameB}`);
+  lines.push(`# AGENTVIZ STUDIO comparison analysis package: ${nameA} vs ${nameB}`);
   lines.push("");
   lines.push("Analyze the controlled comparison below. Treat blocking drift as a confound, distinguish measured values from projections, and do not claim causality from path-dependent N=1 cost differences.");
   lines.push("");
@@ -222,7 +222,7 @@ export function formatComparisonAsMarkdown(
   lines.push("");
 
   lines.push("---");
-  lines.push("Generated from AGENTVIZ Cost Compare. All numbers computed deterministically from the parsed cost analysis.");
+  lines.push("Generated from AGENTVIZ STUDIO Cost Compare. All numbers computed deterministically from the parsed cost analysis.");
 
   return lines.join("\n");
 }

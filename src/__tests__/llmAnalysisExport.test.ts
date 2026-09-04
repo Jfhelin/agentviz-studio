@@ -81,7 +81,7 @@ const analysis: any = {
 describe("formatSessionForLlmAnalysis", () => {
   it("emits measured totals, attribution, threads, and methodology", () => {
     const markdown = formatSessionForLlmAnalysis(analysis, { sessionName: "test-run" });
-    expect(markdown).toContain("# AGENTVIZ session analysis package");
+    expect(markdown).toContain("# AGENTVIZ STUDIO session analysis package");
     expect(markdown).toContain('"sessionName": "test-run"');
     expect(markdown).toContain('"unattributed": 1');
     expect(markdown).toContain("Measured request usage only");

@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * AGENTVIZ MCP server.
+ * AGENTVIZ STUDIO MCP server.
  *
- * Exposes one tool: launch_agentviz
+ * Exposes one tool: launch_agentviz_studio
  *   - Finds the current (or most recent) Claude Code session file
- *   - Starts the AGENTVIZ HTTP server on a free port
+ *   - Starts the AGENTVIZ STUDIO HTTP server on a free port
  *   - Opens the browser with live streaming enabled
  *   - Returns the URL
  *
  * Register in ~/.claude/settings.json:
  *   "mcpServers": {
- *     "agentviz": {
+ *     "agentviz-studio": {
  *       "command": "node",
- *       "args": ["/path/to/agentviz/mcp/server.js"]
+ *       "args": ["/path/to/agentviz-studio/mcp/server.js"]
  *     }
  *   }
  */
@@ -117,7 +117,7 @@ function openBrowser(url) {
 var runningServers = new Map(); // port -> { server, sessionFile }
 
 var mcpServer = new Server(
-  { name: "agentviz", version: "0.1.0" },
+  { name: "agentviz-studio", version: "1.0.0" },
   { capabilities: { tools: {} } }
 );
 
@@ -125,8 +125,8 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async function () {
   return {
     tools: [
       {
-        name: "launch_agentviz",
-        description: "Open the current supported session in AGENTVIZ for visualization. Starts a local server and opens a browser window showing the session replay in real time.",
+        name: "launch_agentviz_studio",
+        description: "Open the current supported session in AGENTVIZ STUDIO for visualization. Starts a local server and opens a browser window showing the session replay in real time.",
         inputSchema: {
           type: "object",
           properties: {
@@ -139,8 +139,8 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async function () {
         },
       },
       {
-        name: "close_agentviz",
-        description: "Stop a running AGENTVIZ server.",
+        name: "close_agentviz_studio",
+        description: "Stop a running AGENTVIZ STUDIO server.",
         inputSchema: {
           type: "object",
           properties: {
@@ -159,12 +159,12 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async function () {
 mcpServer.setRequestHandler(CallToolRequestSchema, async function (request) {
   var name = request.params.name;
 
-  if (name === "launch_agentviz") {
+  if (name === "launch_agentviz_studio") {
     if (!fs.existsSync(distDir)) {
       return {
         content: [{
           type: "text",
-          text: "Error: dist/ not found. Run `npm run build` inside the agentviz repo first.",
+          text: "Error: dist/ not found. Run `npm run build` inside the agentviz-studio repo first.",
         }],
         isError: true,
       };
@@ -192,7 +192,7 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async function (request) {
           var url = "http://localhost:" + port;
           openBrowser(url);
 
-          var msg = "AGENTVIZ. is live at " + url;
+          var msg = "AGENTVIZ STUDIO. is live at " + url;
           if (sessionFile) {
             msg += "\nStreaming: " + sessionFile;
           } else {
@@ -212,11 +212,11 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async function (request) {
     });
   }
 
-  if (name === "close_agentviz") {
+  if (name === "close_agentviz_studio") {
     var port = request.params.arguments && request.params.arguments.port;
 
     if (runningServers.size === 0) {
-      return { content: [{ type: "text", text: "No running AGENTVIZ servers." }] };
+      return { content: [{ type: "text", text: "No running AGENTVIZ STUDIO servers." }] };
     }
 
     var closed = [];
@@ -237,7 +237,7 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async function (request) {
     return {
       content: [{
         type: "text",
-        text: "Stopped AGENTVIZ server" + (closed.length > 1 ? "s" : "") + " on port" + (closed.length > 1 ? "s" : "") + " " + closed.join(", "),
+        text: "Stopped AGENTVIZ STUDIO server" + (closed.length > 1 ? "s" : "") + " on port" + (closed.length > 1 ? "s" : "") + " " + closed.join(", "),
       }],
     };
   }

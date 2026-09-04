@@ -98,7 +98,7 @@ export function buildSessionAnalysisFacts(
   }
   return {
     schemaVersion: 1,
-    sessionName: options.sessionName || "AGENTVIZ session",
+    sessionName: options.sessionName || "AGENTVIZ STUDIO session",
     methodology: {
       headlineUsage: "Measured request usage only",
       outputInvariant: "visible + reasoning + toolArguments + unattributed = reported output",
@@ -131,7 +131,7 @@ export function formatSessionForLlmAnalysis(
 ): string {
   const facts = buildSessionAnalysisFacts(analysis, options);
   return [
-    "# AGENTVIZ session analysis package",
+    "# AGENTVIZ STUDIO session analysis package",
     "",
     "Analyze the measured workflow below. Separate facts from estimates, preserve the output-token accounting invariant, and prioritize actionable cost, cache, context, tool, and workflow findings. Do not present subagent estimates as measured usage.",
     "",
@@ -141,6 +141,6 @@ export function formatSessionForLlmAnalysis(
     "```",
     "",
     "---",
-    "Generated deterministically by AGENTVIZ. No model inference was used to create this package.",
+    "Generated deterministically by AGENTVIZ STUDIO. No model inference was used to create this package.",
   ].join("\n");
 }

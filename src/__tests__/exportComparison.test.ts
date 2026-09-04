@@ -46,7 +46,7 @@ describe("formatComparisonAsMarkdown", () => {
   it("produces a markdown blob containing the major sections", () => {
     const cmp = compareRunsCost(mkRun({}), mkRun({ extraPromptCount: 1 }))!;
     const md = formatComparisonAsMarkdown(cmp, { nameA: "run-a", nameB: "run-b" });
-    expect(md).toContain("# AGENTVIZ comparison analysis package: run-a vs run-b");
+    expect(md).toContain("# AGENTVIZ STUDIO comparison analysis package: run-a vs run-b");
     expect(md).toContain("## Run drift");
     expect(md).toContain("## Pre- vs post-divergence cost split");
     expect(md).toContain("## Headline cost KPIs");

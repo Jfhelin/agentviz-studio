@@ -6,7 +6,7 @@ user-invocable: true
 
 # Copilot Chat Export Analysis
 
-Analyze VS Code Copilot Chat exports without launching AGENTVIZ or exposing the file to an external service.
+Analyze VS Code Copilot Chat exports without launching AGENTVIZ STUDIO or exposing the file to an external service.
 
 ## Run
 

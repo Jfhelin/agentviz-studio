@@ -7,19 +7,21 @@ Companion to the main report: [copilot-cost-report.md](copilot-cost-report.md). 
 Repository:
 
 ```text
-Jfhelin/agentviz
+Jfhelin/agentviz-studio
 ```
 
 Branch:
 
 ```text
-jfhelin/cost-compare-instrumentation
+main
 ```
 
 Install:
 
 ```bash
-npm install -g https://github.com/Jfhelin/agentviz/releases/download/v0.7.0-cost-preview/agentviz-0.7.0.tgz
+git clone https://github.com/Jfhelin/agentviz-studio.git
+cd agentviz-studio
+npm install
 ```
 
 ### Test repo
@@ -75,7 +77,7 @@ cost-test-results/test-NN-<slug>.json
 copilot_all_prompts_*.json
 ```
 
-7. Load the export into agentviz.
+7. Load the export into AGENTVIZ STUDIO.
 8. Use Cost Compare to A/B against baseline.
 9. Verify the export has:
    - Single user-turn count

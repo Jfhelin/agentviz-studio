@@ -1,5 +1,5 @@
 /**
- * AGENTVIZ Design Tokens
+ * AGENTVIZ STUDIO Design Tokens
  *
  * Single light palette shared by every view.
  * Inspired by Linear, Raycast, Vercel -- tools that feel quiet and fast.

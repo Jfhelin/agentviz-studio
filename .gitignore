@@ -32,8 +32,9 @@ coverage/
 # Playwright MCP snapshots
 .playwright-mcp/
 
-# AGENTVIZ runtime artifacts
+# AGENTVIZ STUDIO runtime artifacts
 agentviz-server.log
+agentviz-studio-server.log
 ag.log
 ag-*.log
 ag.*.log

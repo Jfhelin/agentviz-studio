@@ -1,20 +1,20 @@
 <div align="center">
 
-# ◇ AGENTVIZ
+# ◇ AGENTVIZ STUDIO
 
 **See what your AI agents actually do.**
 
 Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explore the agent's reasoning, tool calls, turn flow, and output through replay, tracks, waterfall, graph, and stats views. Or run it from the CLI for a live view that updates as your session unfolds.
 
-[![CI](https://github.com/jayparikh/agentviz/actions/workflows/ci.yml/badge.svg)](https://github.com/jayparikh/agentviz/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/agentviz?color=blue&logo=npm)](https://www.npmjs.com/package/agentviz)
+[![CI](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/agentviz-studio?color=blue&logo=npm)](https://www.npmjs.com/package/agentviz-studio)
 ![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 <br />
 
-<img src="docs/screenshots/session-hero.png" alt="AGENTVIZ session views" width="800" />
+<img src="docs/screenshots/session-hero.png" alt="AGENTVIZ STUDIO session views" width="800" />
 
 *Move between replay, tracks, waterfall, graph, and stats views to inspect the same session from different angles.*
 
@@ -22,9 +22,9 @@ Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explor
 
 ---
 
-## Why AGENTVIZ?
+## Why AGENTVIZ STUDIO?
 
-AI coding agents (Claude Code, VS Code Copilot Chat, Copilot CLI, etc.) generate dense session logs, but reading raw JSONL is painful. AGENTVIZ turns those logs into something you can actually explore:
+AI coding agents (Claude Code, VS Code Copilot Chat, Copilot CLI, etc.) generate dense session logs, but reading raw JSONL is painful. AGENTVIZ STUDIO turns those logs into something you can actually explore:
 
 - **Replay** sessions like a video, stepping through each tool call and reasoning step
 - **Trace** decision flow in a graph view with expandable turn and tool-call structure
@@ -39,18 +39,18 @@ AI coding agents (Claude Code, VS Code Copilot Chat, Copilot CLI, etc.) generate
 ## Quick Start
 
 ```bash
-npx agentviz
+npx agentviz-studio
 ```
 
-Opens AGENTVIZ in your browser. Drop a `.jsonl` or `.json` session file or click **load a demo session** to try it instantly. Copilot CLI and VS Code Copilot Chat sessions are auto-discovered.
+Opens AGENTVIZ STUDIO in your browser. Drop a `.jsonl` or `.json` session file or click **load a demo session** to try it instantly. Copilot CLI and VS Code Copilot Chat sessions are auto-discovered.
 
 ### CLI (live streaming)
 
 ```bash
-npx agentviz ~/.claude/projects/my-project/session.jsonl
+npx agentviz-studio ~/.claude/projects/my-project/session.jsonl
 
 # Or pass a directory -- opens the most recently modified .jsonl inside it
-npx agentviz ~/.claude/projects/my-project/
+npx agentviz-studio ~/.claude/projects/my-project/
 ```
 
 The browser opens with a pulsing **LIVE** badge. As Claude Code writes new events to the session file, they stream into the view in real time via SSE, including records that are written incrementally before the trailing newline lands.
@@ -70,21 +70,21 @@ VS Code Copilot Chat sessions live under your VS Code `workspaceStorage/*/chatSe
 
 ## MCP Integration
 
-AGENTVIZ ships as an MCP server so you can open it directly from Claude Code or GitHub Copilot in VS Code without leaving your workflow. Both agents use the same `launch_agentviz` and `close_agentviz` tools.
+AGENTVIZ STUDIO ships as an MCP server so you can open it directly from Claude Code or GitHub Copilot in VS Code without leaving your workflow. Both agents use the same `launch_agentviz_studio` and `close_agentviz_studio` tools.
 
 ### Claude Code
 
 **Setup (one time):**
 
 ```bash
-claude mcp add --scope user agentviz node /path/to/agentviz/mcp/server.js
+claude mcp add --scope user agentviz-studio node /path/to/agentviz-studio/mcp/server.js
 ```
 
 This registers the server globally across all projects. Restart Claude Code to pick it up.
 
 **Usage:** In any session, just ask:
 
-> "Open agentviz" or "Show me the live view"
+> "Open AGENTVIZ STUDIO" or "Show me the live view"
 
 ### GitHub Copilot in VS Code
 
@@ -94,10 +94,10 @@ This registers the server globally across all projects. Restart Claude Code to p
 {
   "mcp": {
     "servers": {
-      "agentviz": {
+      "agentviz-studio": {
         "type": "stdio",
         "command": "node",
-        "args": ["/path/to/agentviz/mcp/server.js"]
+        "args": ["/path/to/agentviz-studio/mcp/server.js"]
       }
     }
   }
@@ -109,10 +109,10 @@ Or scope it to a single project by creating `.vscode/mcp.json` in your workspace
 ```json
 {
   "servers": {
-    "agentviz": {
+    "agentviz-studio": {
       "type": "stdio",
       "command": "node",
-      "args": ["/path/to/agentviz/mcp/server.js"]
+      "args": ["/path/to/agentviz-studio/mcp/server.js"]
     }
   }
 }
@@ -120,28 +120,28 @@ Or scope it to a single project by creating `.vscode/mcp.json` in your workspace
 
 Reload VS Code after adding the config. In Copilot Chat, use **Agent mode** and ask:
 
-> "Open agentviz" or "Launch the live view"
+> "Open AGENTVIZ STUDIO" or "Launch the live view"
 
 ### What happens when you invoke it
 
-`launch_agentviz` will:
+`launch_agentviz_studio` will:
 
 1. Auto-detect the most recently active session file from Claude Code, Copilot CLI, or VS Code Copilot Chat storage
 2. Start a local HTTP server on a free port
 3. Open the browser with live streaming enabled
 
-To stop it, ask: "Close agentviz"
+To stop it, ask: "Close AGENTVIZ STUDIO"
 
 ### Available MCP tools
 
 | Tool | Description |
 |------|-------------|
-| `launch_agentviz` | Start the server and open the browser. Accepts an optional `session_file` path. |
-| `close_agentviz` | Stop a running server. Accepts an optional `port`; omit to stop all. |
+| `launch_agentviz_studio` | Start the server and open the browser. Accepts an optional `session_file` path. |
+| `close_agentviz_studio` | Stop a running server. Accepts an optional `port`; omit to stop all. |
 
 ## Inbox and AI Coach
 
-When running via the CLI, AGENTVIZ automatically discovers recent Claude Code, Copilot CLI, and VS Code Copilot Chat sessions and shows them on the landing screen in two interchangeable modes: a row-based inbox sorted by review priority and a dashboard card grid with aggregate stats, filters, refresh, and the same one-click open flow.
+When running via the CLI, AGENTVIZ STUDIO automatically discovers recent Claude Code, Copilot CLI, and VS Code Copilot Chat sessions and shows them on the landing screen in two interchangeable modes: a row-based inbox sorted by review priority and a dashboard card grid with aggregate stats, filters, refresh, and the same one-click open flow.
 
 Each session also gets an AI Coach analysis powered by the `@github/copilot-sdk` (gpt-4o). The coach reads your actual project config (`.github/copilot-instructions.md`, skills, MCP servers) and produces actionable recommendations for prompts, skills, and tooling setup. Recommendations can be applied directly with one click.
 
@@ -336,7 +336,7 @@ Open the drawer with `Cmd+Shift+K` (or via the command palette). Questions are r
 | `Enter` / `Shift+Enter` | Next / Previous search match |
 | `?` | Toggle keyboard shortcuts dialog |
 
-Modals, drawers, and overlay panels render keyboard hints with a shared `<kbd>` badge treatment so close, navigate, and select affordances read consistently across AGENTVIZ.
+Modals, drawers, and overlay panels render keyboard hints with a shared `<kbd>` badge treatment so close, navigate, and select affordances read consistently across AGENTVIZ STUDIO.
 
 ## Supported Formats
 
@@ -349,7 +349,7 @@ Modals, drawers, and overlay panels render keyboard hints with a shared `<kbd>` 
 More formats planned -- see [Roadmap](#roadmap).
 ## Static Manifest Mode
 
-Deploy AGENTVIZ as a pure static site with pre-populated sessions -- no backend required. Pass a `?manifest=` query parameter pointing to a JSON manifest:
+Deploy AGENTVIZ STUDIO as a pure static site with pre-populated sessions -- no backend required. Pass a `?manifest=` query parameter pointing to a JSON manifest:
 
 ```
 https://example.com/replay/?manifest=sessions/manifest.json
@@ -466,7 +466,7 @@ routes/
 bin/
   agentviz.js            # CLI entry point: finds free port, starts server, opens browser
 mcp/
-  server.js              # MCP server: launch_agentviz and close_agentviz tools
+  server.js              # MCP server: launch_agentviz_studio and close_agentviz_studio tools
 server.js                # HTTP server shell: static serving, file watcher, route dispatch
 ```
 
@@ -488,12 +488,12 @@ server.js                # HTTP server shell: static serving, file watcher, rout
 ## Usage
 
 ```bash
-npx agentviz                         # Run without installing
-npx agentviz session.jsonl           # Open a specific session file
+npx agentviz-studio                  # Run without installing
+npx agentviz-studio session.jsonl    # Open a specific session file
 npm start                            # Build and launch (from cloned repo)
 ```
 
-AGENTVIZ can also be launched from Claude Code, VS Code, or Copilot CLI via the MCP `launch_agentviz` tool.
+AGENTVIZ STUDIO can also be launched from Claude Code, VS Code, or Copilot CLI via the MCP `launch_agentviz_studio` tool.
 
 ## Development
 
@@ -509,7 +509,7 @@ npm run typecheck       # Type-check with tsc --noEmit
 
 ### Design System
 
-AGENTVIZ uses a single clean, high-contrast light theme with a `#f6f7fb` page background and white surfaces. All colors are defined as design tokens in `src/lib/theme.js`; the complete visual reference is available in `docs/color-palette.html`. JetBrains Mono throughout. No CSS framework; all styles are inline.
+AGENTVIZ STUDIO uses a single clean, high-contrast light theme with a `#f6f7fb` page background and white surfaces. All colors are defined as design tokens in `src/lib/theme.js`; the complete visual reference is available in `docs/color-palette.html`. JetBrains Mono throughout. No CSS framework; all styles are inline.
 
 ### Configuration
 
@@ -517,9 +517,11 @@ AGENTVIZ uses a single clean, high-contrast light theme with a `#f6f7fb` page ba
 
 | Method | Example |
 |--------|---------|
-| Environment variable | `AGENTVIZ_MODEL=gpt-4o node bin/agentviz.js` |
-| Config file | `~/.agentviz/config.json` with `{ "model": "gpt-4o" }` |
-| Custom config path | `AGENTVIZ_CONFIG=/path/to/config.json` |
+| Environment variable | `AGENTVIZ_STUDIO_MODEL=gpt-4o node bin/agentviz.js` |
+| Config file | `~/.agentviz-studio/config.json` with `{ "model": "gpt-4o" }` |
+| Custom config path | `AGENTVIZ_STUDIO_CONFIG=/path/to/config.json` |
+
+Legacy `AGENTVIZ_MODEL`, `AGENTVIZ_CONFIG`, and `~/.agentviz/config.json` settings remain supported during migration. Existing `agentviz:*` browser storage keys are also retained so saved sessions and preferences are not lost.
 
 The current model can be queried via `GET /api/models`.
 
@@ -555,4 +557,12 @@ Please open an issue to discuss larger changes before submitting a PR.
 
 ## License
 
-MIT
+MIT. AGENTVIZ STUDIO preserves the original AGENTVIZ copyright and license notice.
+
+## History
+
+AGENTVIZ STUDIO began as a fork of [AGENTVIZ](https://github.com/jayparikh/agentviz), created by Jay Parikh and released under the MIT License. The original project established the session replay visualizer, parsers, and core timeline views.
+
+The fork later developed its own product direction, including deeper VS Code Copilot Chat export support, measured token-cost analysis, output attribution, agent-thread analysis, run comparison, and a broader local session workflow. In September 2026, the project became the independently maintained **AGENTVIZ STUDIO** repository while preserving the complete Git history and original copyright and license notice.
+
+AGENTVIZ STUDIO is not presented as an official edition of, or affiliated with, the original AGENTVIZ project.

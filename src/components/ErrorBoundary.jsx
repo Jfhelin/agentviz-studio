@@ -12,7 +12,7 @@ export default class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error) {
-    console.error("AGENTVIZ render error:", error);
+    console.error("AGENTVIZ STUDIO render error:", error);
   }
 
   componentDidUpdate(prevProps) {
