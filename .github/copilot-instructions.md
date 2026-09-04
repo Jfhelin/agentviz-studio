@@ -55,9 +55,9 @@ The README references 8 screenshot files in `docs/screenshots/`. All must be kep
      }
    });
    ```
-6. Copy `replay-view.png` to `session-hero.png` (hero reuses replay image)
+6. Load a sanitized VS Code Copilot Chat export, open **Cost**, and capture it as `session-hero.png`
 
-**Note:** `session-hero.png` is the hero image at the top of the README. It must always be regenerated alongside `replay-view.png` -- they use the same source image.
+**Note:** `session-hero.png` is the Cost view hero at the top of the README. Capture it only from synthetic or explicitly sanitized export data.
 
 ## MCP vs Dev Server
 The MCP `launch_agentviz_studio` tool serves the **production build** from `dist/` -- NOT the dev server. Changes to source code are not reflected in MCP until `npm run build` is run. Always run `npm run build` before testing via MCP, and after any code change that the user will view via `open AGENTVIZ STUDIO`.

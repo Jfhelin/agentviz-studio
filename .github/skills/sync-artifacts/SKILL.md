@@ -114,7 +114,7 @@ Screenshots need regeneration if **any visual change** occurred -- component cha
 
 The 8 required screenshots:
 - `landing.png` -- landing page (before loading a session)
-- `session-hero.png` -- hero image at top of README (identical to replay-view)
+- `session-hero.png` -- Cost view hero at top of README, captured from sanitized Copilot export data
 - `replay-view.png` -- main replay view
 - `tracks-view.png` -- tracks (DAW-style) view
 - `waterfall-view.png` -- waterfall view
@@ -164,7 +164,7 @@ For each artifact that needs updating, make the changes directly. Do not ask for
 
 If visual changes occurred, regenerate all 8 screenshots. Even if you think only one view changed, regenerate all of them -- theme changes affect everything.
 
-> **PRIVACY: Never capture personal session data.** Use `?demo=empty` for the landing page and "load a demo session" for all session views. No real user sessions should appear in screenshots.
+> **PRIVACY: Never capture personal session data.** Use `?demo=empty` for the landing page, "load a demo session" for standard session views, and an explicitly sanitized Copilot export for the Cost hero. No real user sessions should appear in screenshots.
 
 ### Capture workflow
 
@@ -196,31 +196,27 @@ npm run dev
    - Should already be on the Replay tab after loading demo
    - Capture screenshot
 
-4. **Session hero** (`session-hero.png`)
-   - Do NOT capture separately -- copy the replay-view PNG
-   - They must be byte-identical
-
-5. **Tracks** (`tracks-view.png`)
+4. **Tracks** (`tracks-view.png`)
    - Click the "Tracks" tab
    - Wait for track lanes to render
    - Capture screenshot
 
-6. **Waterfall** (`waterfall-view.png`)
+5. **Waterfall** (`waterfall-view.png`)
    - Click the "Waterfall" tab
    - Wait for waterfall rows to render
    - Capture screenshot
 
-7. **Graph** (`graph-view.png`)
+6. **Graph** (`graph-view.png`)
    - Click the "Graph" tab
    - Wait for ELKjs layout to complete (nodes positioned)
    - Capture screenshot
 
-8. **Stats** (`stats-view.png`)
+7. **Stats** (`stats-view.png`)
    - Click the "Stats" tab
    - Wait for metrics to render
    - Capture screenshot
 
-9. **Coach** (`coach-view.png`)
+8. **Coach** (`coach-view.png`)
    - Click the "Coach" tab
    - **Before capturing**, hide the error banner by evaluating:
      ```js
@@ -237,14 +233,17 @@ npm run dev
      ```
    - Capture screenshot
 
+9. **Cost hero** (`session-hero.png`)
+   - Load an explicitly sanitized VS Code Copilot Chat export
+   - Click the "Cost" tab
+   - Wait for the call timeline and summary cards to render
+   - Capture screenshot
+
 ### Saving screenshots
 
 Screenshots are saved directly as PNG files to `docs/screenshots/`. No SVG conversion is needed.
 
-**Critical:** Generate `session-hero.png` by copying `replay-view.png`:
-```bash
-cp docs/screenshots/replay-view.png docs/screenshots/session-hero.png
-```
+**Critical:** `session-hero.png` must show the Cost view and must use only synthetic or explicitly sanitized export data.
 
 ### Validation
 
@@ -252,8 +251,8 @@ cp docs/screenshots/replay-view.png docs/screenshots/session-hero.png
 # All 8 files exist and are non-empty
 ls -la docs/screenshots/*.png
 
-# Hero and replay are identical
-diff docs/screenshots/session-hero.png docs/screenshots/replay-view.png
+# Hero is a 1400x860 Cost view capture
+file docs/screenshots/session-hero.png
 ```
 
 ## Step 5: Final Validation
@@ -331,7 +330,7 @@ If "just check" is requested, audit all five artifacts but only report drift -- 
 ## Important Principles
 
 - **Always regenerate ALL 8 screenshots**, not just the view that changed. Theme or layout changes ripple.
-- **session-hero.png must equal replay-view.png**. This is the most common mistake.
+- **session-hero.png must show the Cost view** using only synthetic or explicitly sanitized export data.
 - **Use `?demo=empty`** for the landing page screenshot. Never capture with personal session data visible.
 - **Match existing style** when updating README/CLAUDE.md. Read the surrounding content before writing.
 - **Don't remove content** from artifacts unless the corresponding code was actually removed.

@@ -13,7 +13,7 @@ AGENTVIZ STUDIO is a cost-focused log analyzer for AI agent workflows. Load a VS
 
 <br />
 
-<img src="docs/screenshots/cost-view.png" alt="AGENTVIZ STUDIO cost analysis view" width="800" />
+<img src="docs/screenshots/session-hero.png" alt="AGENTVIZ STUDIO Cost view" width="800" />
 
 *Follow cumulative spend, inspect context growth, and explain cache misses one model call at a time.*
 
@@ -207,7 +207,7 @@ The primary analysis surface for VS Code Copilot Chat exports (`copilot_all_prom
 3. **Context window for this call** -- system prompt, tool definitions, history, tool results, and the current prompt
 
 <div align="center">
-<img src="docs/screenshots/cost-view.png" alt="Cost View" width="800" />
+<img src="docs/screenshots/session-hero.png" alt="Cost View" width="800" />
 </div>
 
 Each model call exposes three lenses on input: **CTX** for full prompt size, **&#9651; NET** for genuinely new tokens scoped to that model, and **$ BILLED** for charged usage. A separate **&#8634; RECOMMIT** signal identifies cache writes that exceed context growth.
