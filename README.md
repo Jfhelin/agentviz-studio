@@ -4,7 +4,7 @@
 
 **See what your AI agents actually do.**
 
-Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explore the agent's reasoning, tool calls, turn flow, and output through replay, tracks, waterfall, graph, and stats views. Or run it from the CLI for a live view that updates as your session unfolds.
+Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explore the agent's reasoning, tool calls, turn flow, output, and measured spend through replay, tracks, waterfall, graph, stats, and cost views. Or run it from the CLI for a live view that updates as your session unfolds.
 
 [![CI](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml)
 ![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
@@ -13,9 +13,9 @@ Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explor
 
 <br />
 
-<img src="docs/screenshots/session-hero.png" alt="AGENTVIZ STUDIO session views" width="800" />
+<img src="docs/screenshots/session-hero.png" alt="AGENTVIZ STUDIO Cost view" width="800" />
 
-*Move between replay, tracks, waterfall, graph, and stats views to inspect the same session from different angles.*
+*Inspect measured token spend, cache behavior, context composition, and output attribution call by call.*
 
 </div>
 
