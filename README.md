@@ -2,9 +2,9 @@
 
 # ◇ AGENTVIZ STUDIO
 
-**See what your AI agents actually do.**
+**See where your AI agent tokens and money actually go.**
 
-Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explore the agent's reasoning, tool calls, turn flow, output, and measured spend through replay, tracks, waterfall, graph, stats, and cost views. Or run it from the CLI for a live view that updates as your session unfolds.
+AGENTVIZ STUDIO is a cost-focused log analyzer for AI agent workflows. Load a VS Code Copilot Chat export to break every request into fresh input, cache reads, cache writes, output, context components, and attributable cost. Replay, graph, timeline, and coaching views provide the supporting evidence behind the spend.
 
 [![CI](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml)
 ![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
@@ -15,7 +15,7 @@ Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explor
 
 <img src="docs/screenshots/session-hero.png" alt="AGENTVIZ STUDIO Cost view" width="800" />
 
-*Inspect measured token spend, cache behavior, context composition, and output attribution call by call.*
+*Follow cumulative spend, inspect context growth, and explain cache misses one model call at a time.*
 
 </div>
 
@@ -23,17 +23,17 @@ Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explor
 
 ## Why AGENTVIZ STUDIO?
 
-AI coding agents (Claude Code, VS Code Copilot Chat, Copilot CLI, etc.) generate dense session logs, but reading raw JSONL is painful. AGENTVIZ STUDIO turns those logs into something you can actually explore:
+Agent logs expose token totals, but totals alone do not explain why a run was expensive. AGENTVIZ STUDIO makes cost analysis the primary workflow:
 
-- **Replay** sessions like a video, stepping through each tool call and reasoning step
-- **Trace** decision flow in a graph view with expandable turn and tool-call structure
-- **Visualize** timing and concurrency in tracks and waterfall timelines
-- **Analyze** tool usage patterns, error rates, and model behavior at a glance
-- **Debug** failures by jumping directly between errors with one keystroke
-- **Stream live** as a session unfolds -- the view updates in real time
-- **Discover sessions** automatically from the Copilot CLI and VS Code session stores
-- **Get AI coaching** on prompt engineering, skills, and MCP setup grounded in best practices
-- **Read comfortably** with a clean, high-contrast light palette
+- **Measure** request-by-request cost using the current per-model pricing table
+- **Separate** fresh input, cache reads, cache writes, and output instead of collapsing them into one token count
+- **Explain** context growth across system instructions, tool definitions, history, tool results, and the current prompt
+- **Diagnose** unexpected cache misses and inspect the tool-definition changes that caused them
+- **Attribute** output to visible replies, reasoning, tool arguments, and any honest residual
+- **Compare** two runs to see where cost, token use, and cache behavior diverged
+- **Export** deterministic Markdown and JSON packages for deeper LLM-assisted analysis
+
+Replay, tracks, waterfall, graph, stats, live streaming, session discovery, and AI coaching remain available for investigating the behavior behind those numbers.
 
 ## Quick Start
 
@@ -44,7 +44,11 @@ npm install
 npm start
 ```
 
-Opens AGENTVIZ STUDIO in your browser. Drop a `.jsonl` or `.json` session file or click **load a demo session** to try it instantly. Copilot CLI and VS Code Copilot Chat sessions are auto-discovered.
+Opens AGENTVIZ STUDIO in your browser. For full cost analysis, drop a VS Code Copilot Chat `copilot_all_prompts_*.json` export. Claude Code, Copilot CLI, and regular VS Code session logs are also supported for replay and operational analysis, and auto-discovered sessions appear in the landing view.
+
+### Exporting cost data from VS Code Copilot Chat
+
+Run **Chat: Export All Prompts** from the VS Code Command Palette, then load the generated `copilot_all_prompts_*.json` file. The Cost tab appears automatically when the export contains per-request usage and context data.
 
 ### CLI (live streaming)
 
@@ -144,13 +148,13 @@ To stop it, ask: "Close AGENTVIZ STUDIO"
 
 ## Inbox and AI Coach
 
-When running via the CLI, AGENTVIZ STUDIO automatically discovers recent Claude Code, Copilot CLI, and VS Code Copilot Chat sessions and shows them on the landing screen in two interchangeable modes: a row-based inbox sorted by review priority and a dashboard card grid with aggregate stats, filters, refresh, and the same one-click open flow.
+When running via the CLI, AGENTVIZ STUDIO automatically discovers recent Claude Code, Copilot CLI, and VS Code Copilot Chat sessions and shows them on the landing screen in two interchangeable modes: a row-based inbox sorted by review priority and a dashboard card grid with aggregate stats, filters, refresh, and the same one-click open flow. Load a Copilot Chat prompt export when you need the complete request-level cost breakdown.
 
 Each session also gets an AI Coach analysis powered by the `@github/copilot-sdk` (gpt-4o). The coach reads your actual project config (`.github/copilot-instructions.md`, skills, MCP servers) and produces actionable recommendations for prompts, skills, and tooling setup. Recommendations can be applied directly with one click.
 
 ## Session Comparison
 
-Load two agent traces side by side to compare them head to head. Great for benchmarking Claude Code vs Copilot CLI on the same task, or comparing two different prompting strategies.
+Load two agent traces side by side to compare them head to head. For Copilot Chat exports, the Cost tab isolates spend drift by component and projects the impact of repeated overhead. The scorecard and tools comparison remain useful for cross-agent benchmarking and prompt experiments.
 
 ### Entry points
 
@@ -193,6 +197,30 @@ Export is available in two places:
 ---
 
 ## Features
+
+### Cost View
+
+The primary analysis surface for VS Code Copilot Chat exports (`copilot_all_prompts_*.json`). It renders a three-column timeline:
+
+1. **Prompt &amp; steps** -- every LLM call and tool call, click to expand
+2. **Cumulative cost so far** -- stacked bars split into fresh input, cache writes, cache reads, and output
+3. **Context window for this call** -- system prompt, tool definitions, history, tool results, and the current prompt
+
+<div align="center">
+<img src="docs/screenshots/session-hero.png" alt="Cost View" width="800" />
+</div>
+
+Each model call exposes three lenses on input: **CTX** for full prompt size, **&#9651; NET** for genuinely new tokens scoped to that model, and **$ BILLED** for charged usage. A separate **&#8634; RECOMMIT** signal identifies cache writes that exceed context growth.
+
+Unexpected cache misses include a tool-definition diff so sudden cost spikes can be traced to their likely cause. Output is reconciled exactly across visible replies, reasoning, tool arguments, and unattributed residual. Headline totals distinguish primary calls, overhead calls, and measured main or subagent threads.
+
+**Copy for LLM analysis** exports deterministic Markdown and fixed-schema JSON with pricing metadata and explicit measured-versus-estimated labels. The repository-local `copilot-chat-export` skill provides the same cost-first workflow in a terminal:
+
+```bash
+node .github/skills/copilot-chat-export/scripts/digest.mjs /path/to/copilot_all_prompts_*.json
+```
+
+The Cost tab appears only when the source includes per-call context and cache usage. Claude Code and Copilot CLI JSONL currently provide aggregate token totals but not the required breakdown.
 
 ### Landing View
 
@@ -244,30 +272,6 @@ A **Tools &amp; Skills** panel surfaces every skill, instruction file, custom ag
 <img src="docs/screenshots/stats-view.png" alt="Stats View" width="800" />
 </div>
 
-### Cost View
-
-Token spend and context-buildup analysis for VS Code Copilot Chat exports (`copilot_all_prompts_*.json`). Renders a three-column timeline:
-
-1. **Prompt &amp; steps** -- every LLM call and tool call, click to expand
-2. **Cumulative cost so far** -- stacked bar broken down by token type (fresh / cache-write / cache-read / output)
-3. **Context window for this call** -- stacked bar showing how each call's input is split across system prompt, tool definitions, history, tool results, and the current prompt
-
-Each LLM call surfaces three lenses on "input": **CTX** (full prompt size), **&#9651; NET** (real new tokens for that model, with per-model cache scoping), and **$ BILLED** (with a separate &#8634; RECOMMIT signal when cache writes exceeded growth). Calls also highlight unexpected cache misses with a tool-defs diff to explain the most common cause of sudden cost spikes under usage-based billing.
-
-Output is attributed into **visible reply**, **reasoning**, **tool arguments**, and an honest **unattributed** residual; the four buckets always sum to reported output usage. Response rows lead with visible text and expand into accessible sections for reasoning and structured tool payloads. Headline usage shows primary versus overhead calls, measured main/subagent threads, and how many available tools were actually used. **Copy for LLM analysis** produces a deterministic Markdown and fixed-schema JSON package with current pricing metadata and explicit measured-versus-estimated labels.
-
-The Cost tab only appears when the loaded session is a Copilot Chat export. Drag and drop a `copilot_all_prompts_*.json` file onto the landing screen to use it.
-
-For terminal-only analysis, the repository-local `copilot-chat-export` skill generates a compact digest without launching the UI:
-
-```bash
-node .github/skills/copilot-chat-export/scripts/digest.mjs /path/to/copilot_all_prompts_*.json
-```
-
-The digest leads with measured request usage, keeps parent `runSubagent` projections explicitly supplemental, and reconciles visible text, reasoning, tool arguments, and unattributed output to the measured completion-token total. It imports the current rate table from `src/lib/pricing.js` instead of embedding model prices.
-
-**Format support:** Cost view depends on per-call context breakdown (system prompt, tool definitions, history, tool results, current prompt as separate token counts) plus per-call cache-read / cache-write usage. Today only the VS Code Copilot Chat export carries that data; Claude Code JSONL and Copilot CLI JSONL surface aggregate `tokenUsage` totals but not the breakdown, so the Cost tab is hidden for those formats. The plan is to lift `contextBreakdown` into the normalized event/turn schema so any future parser can light up Cost view by populating the field when the source data exists.
-
 ### Coach View
 
 AI-powered session coaching available directly from any session. The coach reads your autonomy metrics, project config (`.github/copilot-instructions.md`, MCP servers, skills), and session patterns to produce evidence-backed recommendations for prompts, tooling, and workflow. Click **Analyze** to run, then accept or ignore each draft recommendation. Requires the CLI server -- run via `node bin/agentviz.js` or the MCP tool.
@@ -283,7 +287,7 @@ AI-powered session coaching available directly from any session. The coach reads
 | **Live Streaming** | CLI mode tails a session file via SSE. View updates in real time as events arrive, including newline-delayed JSONL writes from Claude Code. |
 | **Payload Inspector** | Replay and waterfall inspectors show readable JSON or text previews with key summaries, counts, copy, and expand controls. |
 | **Graph View** | Directed turn-flow graph with fork/join DAG for parallel subagents, expandable tool-call nodes, pan/zoom, and playback-aware highlighting. |
-| **Token and Cost Tracking** | Per-turn token usage with estimated USD cost for Claude 3/4 models. |
+| **Cost Analysis** | Request-level spend, context composition, cache behavior, output attribution, drift comparison, and deterministic analysis exports for Copilot Chat prompt exports. |
 | **Search** | Full-text search across events, tools, and agents. Matches highlighted in real time. |
 | **Command Palette** | `Cmd+K` fuzzy search to jump to any turn, event, or view instantly. |
 | **Error Navigation** | Auto-detects errors from flags and text patterns. Jump with `E` / `Shift+E`. |
