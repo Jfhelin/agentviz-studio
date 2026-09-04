@@ -7,7 +7,6 @@
 Drop a Claude Code, VS Code Copilot Chat, or Copilot CLI session file and explore the agent's reasoning, tool calls, turn flow, and output through replay, tracks, waterfall, graph, and stats views. Or run it from the CLI for a live view that updates as your session unfolds.
 
 [![CI](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/Jfhelin/agentviz-studio/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/agentviz-studio?color=blue&logo=npm)](https://www.npmjs.com/package/agentviz-studio)
 ![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -39,7 +38,10 @@ AI coding agents (Claude Code, VS Code Copilot Chat, Copilot CLI, etc.) generate
 ## Quick Start
 
 ```bash
-npx agentviz-studio
+git clone https://github.com/Jfhelin/agentviz-studio.git
+cd agentviz-studio
+npm install
+npm start
 ```
 
 Opens AGENTVIZ STUDIO in your browser. Drop a `.jsonl` or `.json` session file or click **load a demo session** to try it instantly. Copilot CLI and VS Code Copilot Chat sessions are auto-discovered.
@@ -47,10 +49,11 @@ Opens AGENTVIZ STUDIO in your browser. Drop a `.jsonl` or `.json` session file o
 ### CLI (live streaming)
 
 ```bash
-npx agentviz-studio ~/.claude/projects/my-project/session.jsonl
+npm run build
+node bin/agentviz.js ~/.claude/projects/my-project/session.jsonl
 
 # Or pass a directory -- opens the most recently modified .jsonl inside it
-npx agentviz-studio ~/.claude/projects/my-project/
+node bin/agentviz.js ~/.claude/projects/my-project/
 ```
 
 The browser opens with a pulsing **LIVE** badge. As Claude Code writes new events to the session file, they stream into the view in real time via SSE, including records that are written incrementally before the trailing newline lands.
@@ -488,9 +491,8 @@ server.js                # HTTP server shell: static serving, file watcher, rout
 ## Usage
 
 ```bash
-npx agentviz-studio                  # Run without installing
-npx agentviz-studio session.jsonl    # Open a specific session file
-npm start                            # Build and launch (from cloned repo)
+npm start                            # Build and launch
+node bin/agentviz.js session.jsonl   # Open a specific session after building
 ```
 
 AGENTVIZ STUDIO can also be launched from Claude Code, VS Code, or Copilot CLI via the MCP `launch_agentviz_studio` tool.
