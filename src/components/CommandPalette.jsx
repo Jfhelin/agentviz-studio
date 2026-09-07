@@ -8,7 +8,7 @@ import KeyboardHint from "./ui/KeyboardHint.jsx";
  * CommandPalette - Cmd+K fuzzy search overlay
  * Search events, jump to turns, filter by tool, switch views.
  */
-export default function CommandPalette({ events, turns, onSeek, onSetView, onAction, onClose }) {
+export default function CommandPalette({ events, turns, onSeek, onSetView, onAction, onClose, backendFeatures = true }) {
   var [query, setQuery] = useState("");
   var [selectedIdx, setSelectedIdx] = useState(0);
   var inputRef = useRef(null);
@@ -18,8 +18,8 @@ export default function CommandPalette({ events, turns, onSeek, onSetView, onAct
   }, []);
 
   var searchIndex = useMemo(function () {
-    return buildCommandPaletteIndex(events, turns);
-  }, [events, turns]);
+    return buildCommandPaletteIndex(events, turns, { backendFeatures: backendFeatures });
+  }, [backendFeatures, events, turns]);
 
   var results = useMemo(function () {
     return searchCommandPalette(searchIndex, query);

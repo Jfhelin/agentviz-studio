@@ -11,8 +11,8 @@ function normalize(text) {
   return (text || "").toLowerCase();
 }
 
-function buildViewItems() {
-  return [
+function buildViewItems(options) {
+  var items = [
     { id: "view-replay", type: "view", label: "Replay View", iconName: "play", viewId: "replay", searchText: "replay view timeline stream", priority: 40 },
     { id: "view-tracks", type: "view", label: "Tracks View", iconName: "tracks", viewId: "tracks", searchText: "tracks view lanes daw", priority: 40 },
     { id: "view-waterfall", type: "view", label: "Waterfall View", iconName: "waterfall", viewId: "waterfall", searchText: "waterfall view tools timeline execution", priority: 40 },
@@ -20,17 +20,22 @@ function buildViewItems() {
     { id: "view-stats", type: "view", label: "Stats View", iconName: "stats", viewId: "stats", searchText: "stats view metrics summary", priority: 40 },
     { id: "view-coach", type: "view", label: "Coach View", iconName: "sparkles", viewId: "coach", searchText: "coach view analyze recommendations config", priority: 40 },
   ];
+  return options.backendFeatures === false
+    ? items.filter(function (item) { return item.viewId !== "coach"; })
+    : items;
 }
 
-function buildActionItems() {
+function buildActionItems(options) {
+  if (options.backendFeatures === false) return [];
   return [
     { id: "action-qa", type: "action", label: "Session Q&A", iconName: "message-circle", actionId: "toggleQA", searchText: "session qa question answer ask chat drawer", priority: 42 },
   ];
 }
 
-export function buildCommandPaletteIndex(events, turns) {
-  var viewItems = buildViewItems();
-  var actionItems = buildActionItems();
+export function buildCommandPaletteIndex(events, turns, options) {
+  var resolvedOptions = options || {};
+  var viewItems = buildViewItems(resolvedOptions);
+  var actionItems = buildActionItems(resolvedOptions);
   var turnItems = [];
   var eventItems = [];
   var seenEvents = {};

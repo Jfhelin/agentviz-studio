@@ -58,6 +58,13 @@ describe("command palette helpers", function () {
     expect(results[0].label).toBe("Replay View");
   });
 
+  it("removes backend-only commands in viewer mode", function () {
+    var index = buildCommandPaletteIndex([], [], { backendFeatures: false });
+
+    expect(index.items.some(function (item) { return item.viewId === "coach"; })).toBe(false);
+    expect(index.items.some(function (item) { return item.actionId === "toggleQA"; })).toBe(false);
+  });
+
   it("caps event-heavy results", function () {
     var events = [];
     for (var i = 0; i < 40; i++) {

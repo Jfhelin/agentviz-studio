@@ -74,7 +74,6 @@ export default function useSessionLoader(options) {
   var handleFile = useCallback(function (text, name) {
     requestIdRef.current += 1;
     var requestId = requestIdRef.current;
-    console.log("[agentviz][loader] handleFile", { name: name, chars: text ? text.length : 0, requestId: requestId });
 
     if (parseTimeoutRef.current) {
       clearTimeout(parseTimeoutRef.current);
@@ -90,19 +89,9 @@ export default function useSessionLoader(options) {
 
     parseTimeoutRef.current = setTimeout(function () {
       parseTimeoutRef.current = null;
-      var t0 = performance.now();
       var parsed = parseSessionText(text);
-      var t1 = performance.now();
-      console.log("[agentviz][loader] parse complete", {
-        name: name,
-        parseMs: Math.round(t1 - t0),
-        ok: !!parsed.result,
-        eventCount: parsed.result ? parsed.result.events.length : 0,
-        error: parsed.error,
-      });
 
       if (requestId !== requestIdRef.current) {
-        console.log("[agentviz][loader] stale request, dropping", { requestId: requestId, current: requestIdRef.current });
         return;
       }
 
@@ -187,6 +176,13 @@ export default function useSessionLoader(options) {
   // When served by the CLI (server.js), /api/meta tells us the filename
   // and /api/file provides the initial content. Bootstrap from there.
   useEffect(function () {
+    var embeddedSession = window.__AGENTVIZ_SESSION__;
+    if (embeddedSession && embeddedSession.text) {
+      delete window.__AGENTVIZ_SESSION__;
+      handleFile(embeddedSession.text, embeddedSession.name || "session.jsonl");
+      return;
+    }
+
     if (!autoBootstrap) return;
 
     fetch("/api/meta")
@@ -221,7 +217,7 @@ export default function useSessionLoader(options) {
           });
       })
       .catch(function () {});
-  }, [autoBootstrap, notifySessionParsed, resetLiveParser]);
+  }, [autoBootstrap, handleFile, notifySessionParsed, resetLiveParser]);
 
   useEffect(function () {
     return function () {

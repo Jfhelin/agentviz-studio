@@ -27,6 +27,11 @@ src/
     useDiscoveredSessions.js # Auto-discovery of sessions via /api/sessions or ?manifest= URL
     useHashRouter.js   # Hash-based routing between inbox and session views
     useAsyncStatus.js  # Async operation state machine (idle/loading/success/error)
+    viewer/
+      useSessionLoader.js # Browser-only parsing with no backend bootstrap or persistence
+      useDiscoveredSessions.js # Disabled discovery adapter for static hosting
+      useLiveStream.js   # No-op live-stream adapter for static hosting
+      useQA.js           # Local instant-answer adapter with no model fallback
   lib/
     theme.js           # Light-theme design tokens, TRACK_TYPES, AGENT_COLORS
     theme.d.ts         # TypeScript declarations for theme.js
@@ -65,6 +70,8 @@ src/
     formatTime.js      # Duration and date formatting utilities
     landingSessions.js # Shared landing browser labels, filters, and format options
     playbackUtils.js   # Playback state helpers
+    viewerMode.js      # Build-time hosted-viewer mode detection
+    viewerSessionLibrary.js # No-op session persistence adapter
   components/
     InboxView.jsx      # Session inbox with auto-discovery, sorting, refresh, and review priority
     DashboardView.jsx  # Landing dashboard card grid with shared landing controls, aggregate stats, and quick open
@@ -92,6 +99,8 @@ src/
     Icon.jsx           # Lucide icon wrapper; all icons must be imported AND added to ICON_MAP
     app/               # Shell components: AppHeader, AppLandingState, AppLoadingState, CompareLandingState, CompareShell (AppLandingState switches between inbox and dashboard landing modes)
     ui/                # Shared primitives: BrandWordmark, ShellFrame, ToolbarButton, ToolbarSelect, ExportStatusButton, KeyboardHint
+    viewer/
+      DebriefView.jsx  # Local-server-only Coach fallback
     waterfall/         # Waterfall sub-components: WaterfallChart, WaterfallRow, WaterfallInspector, TimeAxis
 routes/
   sessions.js        # Session discovery, file serving, SSE streaming
@@ -130,12 +139,15 @@ Agent types: user, assistant, system
 - `npm start` - Build and launch AGENTVIZ STUDIO in browser (production)
 - `npm run dev` - Vite dev server + API backend (both auto-started)
 - `npm run build` - Production build to dist/
+- `VITE_BASE_PATH=/copilot-ledger/agentviz/ npm run build:viewer` - Static hosted viewer build to dist-viewer/
 - `npm test` - Run 300 tests via Vitest (parsers, layout, diff, graph, autonomy, QA, regressions, and more)
 - `npm run test:watch` - Watch mode for tests
 - `npm run typecheck` - Type-check with tsc --noEmit
 
 `npm run dev` auto-starts the API backend on port 4242.
 Vite proxies `/api/*` to the backend automatically.
+
+The `viewer` Vite mode is a browser-only distribution. It aliases backend-aware hooks and session persistence to static-safe adapters, does not persist imported raw or derived session content, and excludes live streaming, discovery, Coach, model-backed Q&A, and config/apply calls. UI preferences may still use localStorage.
 
 ## Conventions
 - No em dashes in any content or comments
@@ -149,6 +161,7 @@ Vite proxies `/api/*` to the backend automatically.
 - Cache usage summaries omit the cache-write segment when `cacheWrite` is zero
 - Output attribution must sum exactly to reported output: visible + reasoning + tool arguments + unattributed
 - Headline thread totals include measured request usage only; parent-side subagent estimates stay supplemental
+- Hosted viewer builds must never persist imported raw or derived session content and must not call backend APIs.
 
 ## Planned features
 - Bookmarks and annotations (persisted to localStorage)

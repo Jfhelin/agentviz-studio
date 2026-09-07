@@ -6,6 +6,7 @@ import Icon from "../Icon.jsx";
 import BrandWordmark from "../ui/BrandWordmark.jsx";
 import ShellFrame from "../ui/ShellFrame.jsx";
 import usePersistentState from "../../hooks/usePersistentState.js";
+import FileUploader from "../FileUploader.jsx";
 
 // Full-page drag overlay. Attaches listeners to document so it detects drags
 // even when the overlay div itself has pointerEvents:none.
@@ -78,7 +79,7 @@ function DragOverlay({ onLoad }) {
   );
 }
 
-export default function AppLandingState({ error, onLoad, onLoadSample, onStartCompare, inboxEntries, onOpenInboxSession, onRefresh, manifestError, isManifestMode }) {
+export default function AppLandingState({ error, onLoad, onLoadSample, onStartCompare, inboxEntries, onOpenInboxSession, onRefresh, manifestError, isManifestMode, viewerMode }) {
   var [landingMode, setLandingMode] = usePersistentState("agentviz:landing-mode", "inbox");
 
   return (
@@ -96,10 +97,83 @@ export default function AppLandingState({ error, onLoad, onLoadSample, onStartCo
       <div style={{ textAlign: "center" }}>
         <BrandWordmark style={{ fontSize: theme.fontSize.hero }} />
         <div style={{ fontSize: theme.fontSize.md, color: theme.text.dim, marginTop: 6, lineHeight: 1.6 }}>
-          Visualize and improve your AI coding sessions.
+          {viewerMode ? "Private, browser-local session analysis." : "Visualize and improve your AI coding sessions."}
         </div>
       </div>
 
+      {viewerMode ? (
+        <div style={{
+          width: "100%",
+          maxWidth: 720,
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          gap: 16,
+        }}>
+          <div style={{
+            background: theme.bg.surface,
+            border: "1px solid " + theme.border.default,
+            borderRadius: theme.radius.xxl,
+            padding: 20,
+          }}>
+            <FileUploader onLoad={onLoad} />
+          </div>
+          <div style={{
+            background: alpha(theme.accent.primary, 0.05),
+            border: "1px solid " + alpha(theme.accent.primary, 0.22),
+            borderRadius: theme.radius.xl,
+            padding: "12px 16px",
+            color: theme.text.secondary,
+            fontSize: theme.fontSize.sm,
+            fontFamily: theme.font.mono,
+            lineHeight: 1.8,
+            textAlign: "center",
+          }}>
+            Files are read and processed in this browser tab. AGENTVIZ STUDIO does not upload imported session content or save it to browser storage in hosted viewer mode.
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", gap: 16, alignItems: "center" }}>
+            <button
+              type="button"
+              className="av-btn"
+              onClick={onLoadSample}
+              style={{
+                color: theme.accent.primary,
+                cursor: "pointer",
+                fontSize: theme.fontSize.sm,
+                fontFamily: theme.font.mono,
+                background: "none",
+                border: "none",
+                padding: 0,
+              }}
+            >
+              load a demo session
+            </button>
+            <span style={{ color: theme.text.ghost, fontSize: theme.fontSize.sm }}>|</span>
+            <button
+              type="button"
+              className="av-btn"
+              onClick={onStartCompare}
+              style={{
+                color: theme.accent.primary,
+                cursor: "pointer",
+                fontSize: theme.fontSize.sm,
+                fontFamily: theme.font.mono,
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                background: "none",
+                border: "none",
+                padding: 0,
+              }}
+            >
+              <Icon name="arrow-up-down" size={12} /> compare two sessions
+            </button>
+          </div>
+        </div>
+      ) : (
       <div style={{ width: "100%", maxWidth: landingMode === "dashboard" ? 1240 : 860, flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 8 }}>
         {/* view toggle */}
         <div style={{ display: "flex", justifyContent: "flex-end", flexShrink: 0 }}>
@@ -158,6 +232,7 @@ export default function AppLandingState({ error, onLoad, onLoadSample, onStartCo
           />
         )}
       </div>
+      )}
 
       {error && (
         <div style={{

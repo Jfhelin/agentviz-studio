@@ -46,6 +46,16 @@ npm start
 
 Opens AGENTVIZ STUDIO in your browser. For full cost analysis, drop a VS Code Copilot Chat `copilot_all_prompts_*.json` export. Claude Code, Copilot CLI, and regular VS Code session logs are also supported for replay and operational analysis, and auto-discovered sessions appear in the landing view.
 
+### Static hosted viewer
+
+Build a browser-only viewer that can be deployed wholesale beneath a nested static path:
+
+```bash
+VITE_BASE_PATH=/copilot-ledger/agentviz/ npm run build:viewer
+```
+
+The complete artifact is written to `dist-viewer/`. The hosted viewer reads `.json`, `.jsonl`, and `.txt` files with the browser FileReader API. Imported session content stays in the current tab and is not uploaded or saved to browser storage by AGENTVIZ STUDIO. Static viewer builds omit session discovery, live streaming, AI Coach, model-backed Q&A, config/apply operations, and all backend API calls. Replay, tracks, waterfall, graph, stats, cost analysis, comparison, and HTML export remain available.
+
 ### Exporting cost data from VS Code Copilot Chat
 
 Run **Chat: Export All Prompts** from the VS Code Command Palette, then load the generated `copilot_all_prompts_*.json` file. The Cost tab appears automatically when the export contains per-request usage and context data.
@@ -402,7 +412,14 @@ src/
     useDiscoveredSessions.js # Auto-discovery of Copilot CLI and VS Code sessions via /api/sessions
     useHashRouter.js     # Hash-based routing between inbox and session views
     useAsyncStatus.js    # Async operation state machine (idle/loading/success/error)
+    viewer/
+      useSessionLoader.js  # Browser-only parsing with no backend bootstrap or persistence
+      useDiscoveredSessions.js # Disabled discovery adapter for static hosting
+      useLiveStream.js     # No-op live-stream adapter for static hosting
+      useQA.js             # Local instant-answer adapter with no model fallback
   lib/
+    viewerMode.js        # Build-time hosted-viewer mode detection
+    viewerSessionLibrary.js # No-op session persistence adapter
     parseSession.ts      # Auto-detect format router
     parser.ts            # Claude Code JSONL parser
     copilotCliParser.ts  # Copilot CLI JSONL parser
@@ -465,6 +482,8 @@ src/
     Icon.jsx             # Lucide icon wrapper; all icons must be imported AND added to ICON_MAP
     app/                 # Shell: AppHeader, AppLandingState, AppLoadingState, CompareLandingState, CompareShell (lazy-loaded; AppLandingState switches between inbox and dashboard landing modes)
     ui/                  # Shared primitives: BrandWordmark, ShellFrame, ToolbarButton, ToolbarSelect, ExportStatusButton, KeyboardHint
+    viewer/
+      DebriefView.jsx    # Local-server-only Coach fallback
     waterfall/           # Waterfall sub-components: WaterfallChart, WaterfallRow, WaterfallInspector, TimeAxis
 routes/
   sessions.js            # Session discovery, file serving, SSE streaming
@@ -506,12 +525,15 @@ AGENTVIZ STUDIO can also be launched from Claude Code, VS Code, or Copilot CLI v
 ```bash
 npm run dev             # Vite dev server + API backend (auto-started)
 npm run build           # Production build to dist/
+VITE_BASE_PATH=/copilot-ledger/agentviz/ npm run build:viewer
 npm test                # Run all tests via Vitest
 npm run test:watch      # Watch mode
 npm run typecheck       # Type-check with tsc --noEmit
 ```
 
 > `npm run dev` starts both the Vite frontend (port 3000) and the API backend (port 4242) automatically. Vite proxies `/api/*` to the backend.
+>
+> `npm run build:viewer` writes a static-only deployment to `dist-viewer/`. Set `VITE_BASE_PATH` to the final hosted directory, including leading and trailing slashes, so entry scripts, lazy chunks, and the graph layout worker resolve beneath that path.
 
 ### Design System
 
