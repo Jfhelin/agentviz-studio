@@ -28,14 +28,6 @@ export function detectFormat(text: string): SessionFormat {
 
 export function parseSession(text: string): ParsedSession | null {
   const format = detectFormat(text);
-  // eslint-disable-next-line no-console
-  if (typeof console !== "undefined") {
-    console.log("[agentviz][parseSession] detected format", {
-      format,
-      chars: text ? text.length : 0,
-      first120: text ? text.slice(0, 120).replace(/\n/g, "\\n") : "",
-    });
-  }
 
   let result: ParsedSession | null;
   try {
@@ -49,14 +41,5 @@ export function parseSession(text: string): ParsedSession | null {
     throw err;
   }
 
-  // eslint-disable-next-line no-console
-  if (typeof console !== "undefined") {
-    console.log("[agentviz][parseSession] result", {
-      format,
-      ok: !!result,
-      events: result ? result.events.length : 0,
-      turns: result ? result.turns.length : 0,
-    });
-  }
   return result;
 }

@@ -23,7 +23,7 @@ var SHORTCUTS = [
   { key: "?", label: "Toggle this dialog" },
 ];
 
-export default function ShortcutsModal({ onClose }) {
+export default function ShortcutsModal({ onClose, backendFeatures = true }) {
   useEffect(function () {
     function handler(e) {
       if (e.key === "Escape" || e.key === "?") {
@@ -86,7 +86,10 @@ export default function ShortcutsModal({ onClose }) {
           </button>
         </div>
 
-        {SHORTCUTS.map(function (item, i) {
+        {SHORTCUTS.filter(function (item) {
+          if (backendFeatures) return true;
+          return item.label !== "Coach view" && item.label !== "Session Q&A (experimental)";
+        }).map(function (item, i) {
           if (item.section) {
             return (
               <div key={i} style={{

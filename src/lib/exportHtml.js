@@ -1,7 +1,5 @@
 // Builds a self-contained single-file HTML export for sharing sessions.
-// Single session: overrides window.fetch to serve embedded JSONL via the
-//   existing /api/meta + /api/file endpoints that useSessionLoader already
-//   calls on startup.
+// Single session: sets window.__AGENTVIZ_SESSION__ for useSessionLoader.
 // Comparison: sets window.__AGENTVIZ_COMPARE__ which App.jsx reads on mount.
 
 var INLINE_STYLES = `
@@ -73,9 +71,6 @@ function buildHtml(title, setupScript, bundleText) {
     '  <meta charset="UTF-8" />\n' +
     '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n' +
     "  <title>" + escapeHtmlAttr(title) + "</title>\n" +
-    '  <link rel="preconnect" href="https://fonts.googleapis.com" />\n' +
-    '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n' +
-    '  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />\n' +
     "  <style>" + INLINE_STYLES + "  </style>\n" +
     "</head>\n" +
     "<body>\n" +
@@ -105,29 +100,15 @@ function downloadHtml(html, filename) {
 export async function exportSingleSession(rawText, filename) {
   var bundleText = await fetchBundleText();
 
-  var metaPayload = jsonSafe({ filename: filename, live: false });
   var rawTextPayload = jsonSafe(rawText);
 
-  // Runs synchronously before the module, overriding fetch for the two API
-  // endpoints that useSessionLoader calls during its initFromUrl effect.
   var setupScript =
-    "<script>\n" +
-    "(function() {\n" +
-    "  var _orig = window.fetch;\n" +
-    "  var _meta = " + metaPayload + ";\n" +
-    "  var _text = " + rawTextPayload + ";\n" +
-    "  window.fetch = function(url, opts) {\n" +
-    "    var s = String(url);\n" +
-    '    if (s.indexOf("/api/meta") !== -1) {\n' +
-    '      return Promise.resolve(new Response(JSON.stringify(_meta), { status: 200, headers: { "Content-Type": "application/json" } }));\n' +
-    "    }\n" +
-    '    if (s.indexOf("/api/file") !== -1) {\n' +
-    '      return Promise.resolve(new Response(_text, { status: 200, headers: { "Content-Type": "text/plain" } }));\n' +
-    "    }\n" +
-    "    return _orig.apply(window, arguments);\n" +
-    "  };\n" +
-    "})();\n" +
-    "</" + "script>";
+    "<script>window.__AGENTVIZ_SESSION__ = { name: " +
+    jsonSafe(filename) +
+    ", text: " +
+    rawTextPayload +
+    " };</" +
+    "script>";
 
   var exportName = filename.replace(/\.jsonl$/, "") + "-agentviz-studio.html";
   downloadHtml(buildHtml("AGENTVIZ STUDIO - " + filename, setupScript, bundleText), exportName);

@@ -557,6 +557,17 @@ in a conditional.
 
 ## 8. Layout Patterns
 
+### Hosted Viewer Landing
+
+The static hosted viewer uses a centered import-first landing state instead of the local session inbox:
+
+- Lead with the standard `BrandWordmark` and the message "Private, browser-local session analysis."
+- Reuse `FileUploader` inside a bordered surface with the standard `theme.radius.xxl`.
+- Place the privacy explanation directly beneath the drop zone in an accent-tinted informational card.
+- State the implemented behavior precisely: files are processed in the current browser tab, are not uploaded by AGENTVIZ STUDIO, and are not saved to browser storage in hosted viewer mode.
+- Keep demo and compare actions available below the privacy card.
+- Hide local-server-only controls rather than presenting actions that will fail: session discovery/refresh, recent sessions, live mode, Coach, and model-backed Q&A.
+
 ### Full-Viewport Shell
 
 The app shell uses `ShellFrame` at the top level. Individual views (ReplayView, TracksView, etc.)

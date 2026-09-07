@@ -39,13 +39,36 @@ function agentvizStudioBackend() {
 
 export default defineConfig(function ({ mode }) {
   var isDebugBuild = mode === 'debug'
+  var isViewerBuild = mode === 'viewer'
+  var viewerAliases = isViewerBuild
+    ? [
+        { find: './hooks/useSessionLoader.js', replacement: path.resolve(__dirname, 'src/hooks/viewer/useSessionLoader.js') },
+        { find: './hooks/useDiscoveredSessions.js', replacement: path.resolve(__dirname, 'src/hooks/viewer/useDiscoveredSessions.js') },
+        { find: './hooks/useLiveStream.js', replacement: path.resolve(__dirname, 'src/hooks/viewer/useLiveStream.js') },
+        { find: './hooks/useQA.js', replacement: path.resolve(__dirname, 'src/hooks/viewer/useQA.js') },
+        { find: './lib/sessionLibrary.js', replacement: path.resolve(__dirname, 'src/lib/viewerSessionLibrary.js') },
+        { find: './components/DebriefView.jsx', replacement: path.resolve(__dirname, 'src/components/viewer/DebriefView.jsx') },
+      ]
+    : []
 
   return {
     // Use VITE_BASE_PATH env var to override the base URL for built assets.
     // Defaults to './' (relative paths) so the SPA works when served from a
     // subdirectory (e.g. static manifest mode). Set to '/' for root deployments.
     base: process.env.VITE_BASE_PATH || './',
-    plugins: [react(), agentvizStudioBackend()],
+    plugins: [
+      react(),
+      !isViewerBuild && agentvizStudioBackend(),
+      isViewerBuild && {
+        name: 'agentviz-studio-viewer-html',
+        transformIndexHtml: function (html) {
+          return html.replace(/\s*<link[^>]+fonts\.(?:googleapis|gstatic)\.com[^>]*>/g, '')
+        },
+      },
+    ].filter(Boolean),
+    resolve: {
+      alias: viewerAliases,
+    },
     server: {
       port: 3000,
       open: true,
@@ -59,6 +82,9 @@ export default defineConfig(function ({ mode }) {
     build: {
       minify: isDebugBuild ? false : 'esbuild',
       sourcemap: isDebugBuild,
+    },
+    define: {
+      __AGENTVIZ_VIEWER_MODE__: JSON.stringify(isViewerBuild),
     },
     test: {
       alias: {

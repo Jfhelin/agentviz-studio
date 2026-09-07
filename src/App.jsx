@@ -28,6 +28,7 @@ import QADrawer from "./components/QADrawer.jsx";
 import useFeatureFlag from "./hooks/useFeatureFlag.js";
 import useQA from "./hooks/useQA.js";
 import { buildAutonomyMetrics, buildAutonomySummary } from "./lib/autonomyMetrics.js";
+import { VIEWER_MODE } from "./lib/viewerMode.js";
 import {
   loadStoredSessionContent,
   persistSessionSnapshot,
@@ -122,10 +123,10 @@ function renderActiveView(activeView, props) {
   );
 }
 
-export default function App() {
+export default function App({ viewerMode = VIEWER_MODE } = {}) {
   var [view, setView] = usePersistentState("agentviz:view", "replay");
   var [libraryEntries, setLibraryEntries] = useState(function () {
-    return reconcileSessionLibrary();
+    return viewerMode ? [] : reconcileSessionLibrary();
   });
   var [showPalette, setShowPalette] = useState(false);
   var [showShortcuts, setShowShortcuts] = useState(false);
@@ -138,7 +139,7 @@ export default function App() {
   var filtersRef = useRef(null);
   var sessionLoadCount = useRef(0);
 
-  var discovered = useDiscoveredSessions();
+  var discovered = useDiscoveredSessions({ enabled: !viewerMode });
 
   // Merge discovered sessions with library: library entries (already parsed) take precedence.
   // Filter discovered to sessions > 5KB (tiny files are Claude internal queue/ops sessions).
@@ -208,11 +209,12 @@ export default function App() {
   }, [libraryEntries, discovered.sessions]);
 
   var handleSessionParsed = useCallback(function (result, name, rawText) {
+    if (viewerMode) return;
     var persisted = persistSessionSnapshot(name, result, rawText);
     setLibraryEntries(persisted.entries);
-  }, []);
+  }, [viewerMode]);
 
-  var session = useSessionLoader({ onSessionParsed: handleSessionParsed });
+  var session = useSessionLoader({ autoBootstrap: !viewerMode, onSessionParsed: handleSessionParsed });
   var sessionB = useSessionLoader({ autoBootstrap: false, onSessionParsed: handleSessionParsed });
   var sessionExport = useAsyncStatus();
   var compareExport = useAsyncStatus();
@@ -227,7 +229,7 @@ export default function App() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useLiveStream({
-    enabled: session.isLive,
+    enabled: !viewerMode && session.isLive,
     onLines: session.appendLines,
   });
 
@@ -238,7 +240,10 @@ export default function App() {
     return { summary: buildAutonomySummary(autonomyMetrics) };
   }, [autonomyMetrics]);
 
-  var isValidView = APP_VIEWS.some(function (item) { return item.id === view; });
+  var availableViews = APP_VIEWS.filter(function (item) {
+    return !viewerMode || item.id !== "coach";
+  });
+  var isValidView = availableViews.some(function (item) { return item.id === view; });
   var activeView = isValidView ? view : "replay";
 
   useEffect(function () {
@@ -387,13 +392,14 @@ export default function App() {
   if (!session.events) {
     return (
       <AppLandingState
+        viewerMode={viewerMode}
         error={session.error || loadError}
         onLoad={handleFile}
         onLoadSample={loadSample}
         onStartCompare={function () { setCompareLanding(true); }}
         inboxEntries={allSessions}
         onOpenInboxSession={openStoredSession}
-        onRefresh={function () {
+        onRefresh={viewerMode ? null : function () {
           var pruned = pruneDeadEntries();
           setLibraryEntries(pruned);
           return discovered.refresh();
@@ -414,8 +420,8 @@ export default function App() {
           onExportComparison={handleExportComparison}
           exportState={compareExport.state}
           exportError={compareExport.error}
-          onOpenSessionA={function () { openCompareSessionInCoach(session); }}
-          onOpenSessionB={function () { openCompareSessionInCoach(sessionB); }}
+          onOpenSessionB={viewerMode ? null : function () { openCompareSessionInCoach(sessionB); }}
+          onOpenSessionA={viewerMode ? null : function () { openCompareSessionInCoach(session); }}
         />
       </React.Suspense>
     );
@@ -447,6 +453,8 @@ export default function App() {
         handleExportSession={handleExportSession}
         sessionExport={sessionExport}
         setCompareLanding={setCompareLanding}
+        viewerMode={viewerMode}
+        availableViews={availableViews}
       />
     </PlaybackProvider>
   );
@@ -459,7 +467,7 @@ function AppSessionView({
   showPalette, setShowPalette, showShortcuts, setShowShortcuts,
   showFilters, setShowFilters, showQA, setShowQA, qaFlag,
   searchInputRef, filtersRef, reset, allSessions, openStoredSession,
-  handleExportSession, sessionExport, setCompareLanding,
+  handleExportSession, sessionExport, setCompareLanding, viewerMode, availableViews,
 }) {
   var pb = usePlaybackContext();
 
@@ -472,7 +480,7 @@ function AppSessionView({
       autonomyMetrics: autonomyMetrics,
     };
   }, [session.events, session.turns, session.metadata, autonomyMetrics]);
-  var qa = useQA(qaSessionData);
+  var qa = useQA(qaSessionData, { allowModelFallback: !viewerMode });
 
   useEffect(function () {
     if (!showFilters) return;
@@ -508,11 +516,14 @@ function AppSessionView({
     onDismissHero: session.dismissHero,
     onPlayPause: pb.playback.playPause,
     onSeek: pb.playback.seek,
-    onSetView: setView,
+    onSetView: function (nextView) {
+      if (viewerMode && nextView === "coach") return;
+      setView(nextView);
+    },
     onJumpToError: pb.jumpToError,
     onFocusSearch: focusSearch,
     onToggleShortcuts: function () { setShowShortcuts(function (prev) { return !prev; }); },
-    onToggleQA: function () {
+    onToggleQA: viewerMode ? null : function () {
       if (!qaFlag.enabled) qaFlag.setEnabled(true);
       setShowQA(function (prev) { return !prev; });
     },
@@ -554,18 +565,19 @@ function AppSessionView({
           onAction={function (actionId) {
             if (actionId === "toggleQA") setShowQA(true);
           }}
+          backendFeatures={!viewerMode}
           onClose={function () { setShowPalette(false); }}
         />
       )}
 
       {showShortcuts && (
-        <ShortcutsModal onClose={function () { setShowShortcuts(false); }} />
+        <ShortcutsModal backendFeatures={!viewerMode} onClose={function () { setShowShortcuts(false); }} />
       )}
 
       <AppHeader
         session={session}
         activeView={activeView}
-        views={APP_VIEWS.filter(function (v) {
+        views={availableViews.filter(function (v) {
           if (v.id !== "cost") return true;
           return !!(session && session.metadata && session.metadata.costAnalysis);
         })}
@@ -591,8 +603,8 @@ function AppSessionView({
         onExportSession={handleExportSession}
         exportSessionState={sessionExport.state}
         exportSessionError={sessionExport.error}
-        recentSessions={allSessions}
-        onOpenRecentSession={openStoredSession}
+        recentSessions={viewerMode ? [] : allSessions}
+        onOpenRecentSession={viewerMode ? null : openStoredSession}
         currentFile={session.file}
       />
 
@@ -622,19 +634,21 @@ function AppSessionView({
           turnStartMap: pb.turnStartMap,
           autonomyMetrics: autonomyMetrics,
           debrief: debrief,
-          onOpenCoach: function () { setView("coach"); },
+          onOpenCoach: viewerMode ? null : function () { setView("coach"); },
         })}
       </div>
 
-      <QADrawer
-        open={showQA}
-        onClose={function () { setShowQA(false); }}
-        onDisable={function () { setShowQA(false); qaFlag.setEnabled(false); }}
-        sessionData={qaSessionData}
-        onSeek={pb.playback.seek}
-        turns={session.turns}
-        qa={qa}
-      />
+      {!viewerMode && (
+        <QADrawer
+          open={showQA}
+          onClose={function () { setShowQA(false); }}
+          onDisable={function () { setShowQA(false); qaFlag.setEnabled(false); }}
+          sessionData={qaSessionData}
+          onSeek={pb.playback.seek}
+          turns={session.turns}
+          qa={qa}
+        />
+      )}
     </div>
   );
 }

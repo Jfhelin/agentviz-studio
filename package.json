@@ -38,6 +38,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:debug": "vite build --mode debug",
+    "build:viewer": "vite build --mode viewer --outDir dist-viewer",
     "preview": "vite preview",
     "prepare": "npm run build",
     "test": "vitest run",

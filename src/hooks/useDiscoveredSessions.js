@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 
 var POLL_INTERVAL_MS = 30000; // re-scan every 30s to pick up new sessions
 
-export default function useDiscoveredSessions() {
+export default function useDiscoveredSessions(options) {
+  var enabled = !options || options.enabled !== false;
   var params = new URLSearchParams(window.location.search);
   var forceEmpty = params.get("demo") === "empty";
   var manifestUrl = params.get("manifest");
@@ -13,7 +14,7 @@ export default function useDiscoveredSessions() {
   var [manifestError, setManifestError] = useState(null);
 
   var fetchSessions = useCallback(function () {
-    if (forceEmpty) return Promise.resolve();
+    if (!enabled || forceEmpty) return Promise.resolve();
     setLoading(true);
 
     // Static manifest mode: ?manifest=URL skips the backend entirely
@@ -72,20 +73,24 @@ export default function useDiscoveredSessions() {
         setAvailable(false);
         setLoading(false);
       });
-  }, [forceEmpty, manifestUrl]);
+  }, [enabled, forceEmpty, manifestUrl]);
 
   useEffect(function () {
+    if (!enabled) return;
     fetchSessions();
     // Only poll when using backend mode; manifest is loaded once
     if (!manifestUrl) {
       var timer = setInterval(fetchSessions, POLL_INTERVAL_MS);
       return function () { clearInterval(timer); };
     }
-  }, [fetchSessions]);
+  }, [enabled, fetchSessions]);
 
   // Fetches the raw content of a discovered session.
   // Accepts either a session object (with .source field) or a plain path string.
   var fetchSessionContent = useCallback(function (session) {
+    if (!enabled) {
+      return Promise.reject(new Error("Session discovery is available only when running the local AGENTVIZ STUDIO server."));
+    }
     if (session && session.source === "manifest") {
       return fetch(session.path || session).then(function (r) {
         if (!r.ok) throw new Error("fetch failed: " + r.status);
@@ -98,7 +103,7 @@ export default function useDiscoveredSessions() {
         if (!r.ok) throw new Error("fetch failed: " + r.status);
         return r.text();
       });
-  }, []);
+  }, [enabled]);
 
   return {
     sessions: sessions,

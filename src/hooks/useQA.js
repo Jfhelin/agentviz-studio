@@ -17,7 +17,8 @@ function nextMsgId() { return "qa-msg-" + (++_msgId); }
  * @param {object} sessionData - { events, turns, metadata, autonomyMetrics }
  * @returns {{ messages, isStreaming, streamingStatus, error, ask, abort, clear }}
  */
-export default function useQA(sessionData) {
+export default function useQA(sessionData, options) {
+  var allowModelFallback = !options || options.allowModelFallback !== false;
   var [messages, setMessages] = useState([]);
   var [isStreaming, setIsStreaming] = useState(false);
   var [streamingStatus, setStreamingStatus] = useState(null);
@@ -41,6 +42,18 @@ export default function useQA(sessionData) {
     if (result.tier === "instant") {
       setMessages(function (prev) {
         return prev.concat({ id: nextMsgId(), role: "assistant", content: result.answer, instant: true });
+      });
+      return;
+    }
+
+    if (!allowModelFallback) {
+      setMessages(function (prev) {
+        return prev.concat({
+          id: nextMsgId(),
+          role: "assistant",
+          content: "Model-backed Q&A is available only when running the local AGENTVIZ STUDIO server.",
+          instant: true,
+        });
       });
       return;
     }
@@ -113,7 +126,7 @@ export default function useQA(sessionData) {
         abortRef.current = null;
       },
     });
-  }, [sessionData]);
+  }, [allowModelFallback, sessionData]);
 
   var abort = useCallback(function () {
     if (abortRef.current) {
@@ -141,8 +154,10 @@ export default function useQA(sessionData) {
     setMessages([]);
     setError(null);
     // Reset server-side persistent session so context doesn't leak
-    fetch("/api/qa/reset", { method: "POST" }).catch(function () {});
-  }, [abort]);
+    if (allowModelFallback) {
+      fetch("/api/qa/reset", { method: "POST" }).catch(function () {});
+    }
+  }, [abort, allowModelFallback]);
 
   return {
     messages: messages,
